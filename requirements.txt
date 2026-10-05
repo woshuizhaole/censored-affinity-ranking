@@ -1,0 +1,26 @@
+# Pinned to the versions actually used for the reported results.
+# Python 3.10.20
+#
+# PyTorch is installed from the CUDA 11.8 wheel index:
+#   pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cu118
+# For a CPU-only install, drop the "+cu118" local version tag.
+#
+# A conda/mamba install is recommended for rdkit and pyarrow.
+# MMseqs2 is a separate native binary (see README).
+
+torch==2.4.1+cu118
+numpy==1.26.4
+scipy==1.15.2
+pandas==2.3.3
+pyarrow==24.0.0
+scikit-learn==1.7.2
+statsmodels==0.14.6
+joblib==1.5.3
+rdkit==2026.3.3
+chembl_structure_pipeline==1.2.4
+fair-esm==2.0.0
+omegaconf==2.3.0
+PyYAML==6.0.3
+tqdm==4.68.3
+polars==1.42.1
+pytest==9.1.1

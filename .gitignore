@@ -1,0 +1,52 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Environments
+env/
+venv/
+.venv/
+.conda/
+.python-version
+
+# Data and derived artifacts (rebuild from public sources, see README)
+data/
+results/
+logs/
+run/
+*.parquet
+*.npz
+*.pt
+*.ckpt
+*.db
+*.sqlite
+*.tsv
+*.csv
+*.smi
+*.ism
+*.sdf
+*.fasta
+*.tar.gz
+*.tar
+*.zip
+*.gz
+!data/manifests/*.tsv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

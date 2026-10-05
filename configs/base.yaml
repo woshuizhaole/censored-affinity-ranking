@@ -1,0 +1,59 @@
+# Base config for censored-affinity project (OmegaConf-loadable).
+seed: 42
+proj: /data/workplace/wyx/censored_affinity_20260707
+
+paths:
+  data_raw: ${proj}/data/raw
+  data_interim: ${proj}/data/interim
+  data_processed: ${proj}/data/processed
+  data_features: ${proj}/data/features
+  data_external: ${proj}/data/external
+  results: ${proj}/results
+  logs: ${proj}/logs
+  bindingdb_tsv: ${proj}/data/raw/bindingdb/BindingDB_All.tsv
+  esm2_ckpt: ${proj}/data/raw/esm2_t12_35M_UR50D.pt
+
+data:
+  endpoint: IC50            # main endpoint (also Ki as robustness)
+  min_pAff: 0.0
+  max_pAff: 13.0
+  drop_approx_relation: true   # drop '~' relation
+  # active/inactive thresholds (p-scale) for VS eval binarization
+  active_pAff: 6.0          # <1 uM
+  inactive_pAff: 5.0        # >10 uM ; grey zone (5,6) dropped from eval
+
+model:
+  fp_bits: 1024             # ECFP4 radius=2
+  fp_radius: 2
+  esm_dim: 480              # esm2_t12_35M hidden
+  hidden: [512, 256]
+  dropout: 0.1
+  two_head: true            # predict (mu, log_sigma)
+
+train:
+  lr: 1.0e-3
+  weight_decay: 0.0
+  batch_size: 1024
+  max_epochs: 200
+  patience: 20              # early-stop on val EF1%/BEDROC (not loss)
+  eval_metric: BEDROC       # early-stop metric
+  bedroc_alpha: 20.0
+  device: auto              # cpu | cuda | auto ; MLP tiny -> cpu default ok
+
+loss:
+  # arm in {A_drop, B_cast, C_bounded, D_tobit, E_tobit_rankobs, F_tobit_rankdec}
+  arm: F_tobit_rankdec
+  lambda_rank: 0.3          # sweep {0.1,0.3,1.0}
+  margin: 1.0               # sweep {0.5,1,2}
+  sigma_floor: 1.0e-4
+  rank_warmup_epochs: 5     # pure-Tobit warmup before adding ranking term
+  upsample_censored_pairs: true
+
+eval:
+  ef_fractions: [0.005, 0.01, 0.05]
+  bedroc_alphas: [20.0, 80.5, 160.9]
+  min_actives_per_target: 10
+  n_seeds: 5
+  n_decoys: 2000          # shared random decoys per target (realistic VS library; BindingDB is binder-heavy)
+  max_actives_eval: 300   # cap measured actives per target in eval (handles mega-targets)
+  valid_max_targets: 200  # subsample valid targets for per-epoch early-stopping eval (speed; test uses all)
